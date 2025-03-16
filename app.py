@@ -5,7 +5,6 @@ import numpy as np
 
 app = Flask(__name__)
 
-# Ensure NaN values are converted to None for JSON serialization
 pd.options.mode.use_inf_as_na = True
 
 def clean_json(df):
@@ -13,10 +12,10 @@ def clean_json(df):
     df = df.replace(["NaN", "nan"], np.nan)
     # Replace infinities with np.nan
     df = df.replace([np.inf, -np.inf], np.nan)
-    # Convert all actual missing values to None
-    df = df.where(df.notna(), None)
+    # Drop any rows that contain NaN
+    df = df.dropna(how='any')
     # Reset index and return a list of records
-    return df.reset_index(drop=True).to_dict(orient='records')
+    return df.reset_index().to_dict(orient='records')
 
 # Route for ticker basic info
 @app.route('/stock/<ticker>', methods=['GET'])
@@ -27,7 +26,6 @@ def get_ticker_info(ticker):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Route for growth estimates
 @app.route('/stock/<ticker>/growth_estimates', methods=['GET'])
 def get_growth_estimates(ticker):
     try:
@@ -39,7 +37,6 @@ def get_growth_estimates(ticker):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Route for earnings
 @app.route('/stock/<ticker>/earnings', methods=['GET'])
 def get_earnings(ticker):
     try:
@@ -51,7 +48,6 @@ def get_earnings(ticker):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Route for financial statements
 @app.route('/stock/<ticker>/financials', methods=['GET'])
 def get_financials(ticker):
     try:
@@ -63,7 +59,6 @@ def get_financials(ticker):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Route for balance sheet
 @app.route('/stock/<ticker>/balance_sheet', methods=['GET'])
 def get_balance_sheet(ticker):
     try:
@@ -75,7 +70,6 @@ def get_balance_sheet(ticker):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Route for cashflow
 @app.route('/stock/<ticker>/cashflow', methods=['GET'])
 def get_cashflow(ticker):
     try:
@@ -87,7 +81,6 @@ def get_cashflow(ticker):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Route for sustainability data
 @app.route('/stock/<ticker>/sustainability', methods=['GET'])
 def get_sustainability(ticker):
     try:
@@ -99,7 +92,6 @@ def get_sustainability(ticker):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Route for recommendations
 @app.route('/stock/<ticker>/recommendations', methods=['GET'])
 def get_recommendations(ticker):
     try:
