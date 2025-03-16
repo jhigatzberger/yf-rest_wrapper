@@ -95,35 +95,3 @@ def institutional_holders(ticker):
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
-```
-
-### Explanation:
-
-- Each endpoint is clearly separated, returning the relevant pandas DataFrame as JSON (`to_json()`).
-- Error handling ensures you always return meaningful responses.
-
-### Example usage:
-
-- General info:
-  ```
-  GET /stock/AAPL
-```
-- Growth estimates:
-  ```
-  GET /stock/AAPL/growth_estimates
-```
-- Earnings:
-  ```
-  GET /stock/AAPL/earnings
-```
-- Balance Sheet:
-  ```
-  GET /stock/AAPL/balance_sheet
-  ```
-
-- Cashflow:
-  ```
-  GET /stock/AAPL/cashflow
-  ```
-
-Each endpoint directly corresponds to the functionality provided by the yfinance API, making the application easy to maintain and extend.
