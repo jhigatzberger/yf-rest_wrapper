@@ -8,7 +8,7 @@ app = Flask(__name__)
 pd.options.mode.use_inf_as_na = True
 
 def clean_json(df):
-    return df.reset_index().fillna(value=None).to_dict(orient='records')
+    return df.reset_index().replace({pd.NA: None, pd.NaT: None}).to_dict(orient='records')
 
 # Route for ticker basic info
 @app.route('/stock/<ticker>', methods=['GET'])
