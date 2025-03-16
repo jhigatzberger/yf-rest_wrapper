@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 import yfinance as yf
 import pandas as pd
+import numpy as np
 
 app = Flask(__name__)
 
@@ -8,7 +9,14 @@ app = Flask(__name__)
 pd.options.mode.use_inf_as_na = True
 
 def clean_json(df):
-    return df.reset_index().replace({pd.NA: None, pd.NaT: None}).to_dict(orient='records')
+    # Replace literal strings "NaN" or "nan" with actual np.nan
+    df = df.replace(["NaN", "nan"], np.nan)
+    # Replace infinities with np.nan
+    df = df.replace([np.inf, -np.inf], np.nan)
+    # Convert all actual missing values to None
+    df = df.where(df.notna(), None)
+    # Reset index and return a list of records
+    return df.reset_index(drop=True).to_dict(orient='records')
 
 # Route for ticker basic info
 @app.route('/stock/<ticker>', methods=['GET'])
