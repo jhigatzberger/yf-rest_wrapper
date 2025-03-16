@@ -1,7 +1,14 @@
 from flask import Flask, jsonify
 import yfinance as yf
+import pandas as pd
 
 app = Flask(__name__)
+
+# Ensure NaN values are converted to None for JSON serialization
+pd.options.mode.use_inf_as_na = True
+
+def clean_json(df):
+    return df.reset_index().where(pd.notna(df), None).to_dict(orient='records')
 
 # Route for ticker basic info
 @app.route('/stock/<ticker>', methods=['GET'])
@@ -20,7 +27,7 @@ def get_growth_estimates(ticker):
         growth = ticker_obj.growth_estimates
         if growth is None or growth.empty:
             return jsonify({"error": "No growth estimates available"}), 404
-        return jsonify(growth.reset_index().to_dict(orient='records')), 200
+        return jsonify(clean_json(growth)), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -32,7 +39,7 @@ def get_earnings(ticker):
         earnings = ticker_obj.earnings
         if earnings is None or earnings.empty:
             return jsonify({"error": "No earnings data available"}), 404
-        return jsonify(earnings.reset_index().to_dict(orient='records')), 200
+        return jsonify(clean_json(earnings)), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -44,7 +51,7 @@ def get_financials(ticker):
         financials = ticker_obj.financials
         if financials is None or financials.empty:
             return jsonify({"error": "No financials data available"}), 404
-        return jsonify(financials.reset_index().to_dict(orient='records')), 200
+        return jsonify(clean_json(financials)), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -56,7 +63,7 @@ def get_balance_sheet(ticker):
         balance_sheet = ticker_obj.balance_sheet
         if balance_sheet is None or balance_sheet.empty:
             return jsonify({"error": "No balance sheet data available"}), 404
-        return jsonify(balance_sheet.reset_index().to_dict(orient='records')), 200
+        return jsonify(clean_json(balance_sheet)), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -68,7 +75,7 @@ def get_cashflow(ticker):
         cashflow = ticker_obj.cashflow
         if cashflow is None or cashflow.empty:
             return jsonify({"error": "No cashflow data available"}), 404
-        return jsonify(cashflow.reset_index().to_dict(orient='records')), 200
+        return jsonify(clean_json(cashflow)), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -80,7 +87,7 @@ def get_sustainability(ticker):
         sustainability = ticker_obj.sustainability
         if sustainability is None or sustainability.empty:
             return jsonify({"error": "No sustainability data available"}), 404
-        return jsonify(sustainability.reset_index().to_dict(orient='records')), 200
+        return jsonify(clean_json(sustainability)), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -92,7 +99,7 @@ def get_recommendations(ticker):
         recommendations = ticker_obj.recommendations
         if recommendations is None or recommendations.empty:
             return jsonify({"error": "No recommendations available"}), 404
-        return jsonify(recommendations.reset_index().to_dict(orient='records')), 200
+        return jsonify(clean_json(recommendations)), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
