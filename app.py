@@ -3,93 +3,96 @@ import yfinance as yf
 
 app = Flask(__name__)
 
-# General ticker data
-@app.route('/stock/<string:ticker>', methods=['GET'])
-def ticker_info(ticker):
+# Route for ticker basic info
+@app.route('/stock/<ticker>', methods=['GET'])
+def get_ticker_info(ticker):
     try:
-        stock = yf.Ticker(ticker)
-        info = stock.info
-        return jsonify(info), 200
+        ticker_obj = yf.Ticker(ticker)
+        return jsonify(ticker_obj.info), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Growth estimates
-@app.route('/stock/<string:ticker>/growth_estimates', methods=['GET'])
-def growth_estimates(ticker):
+# Route for growth estimates
+@app.route('/stock/<ticker>/growth_estimates', methods=['GET'])
+def get_growth_estimates(ticker):
     try:
-        stock = yf.Ticker(ticker)
-        growth = stock.growth_estimates
-        return jsonify(growth.to_json), 200
+        ticker_obj = yf.Ticker(ticker)
+        growth = ticker_obj.growth_estimates
+        if growth is None or growth.empty:
+            return jsonify({"error": "No growth estimates available"}), 404
+        return jsonify(growth.reset_index().to_dict(orient='records')), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Earnings data
-@app.route('/stock/<string:ticker>/earnings', methods=['GET'])
-def earnings(ticker):
+# Route for earnings
+@app.route('/stock/<ticker>/earnings', methods=['GET'])
+def get_earnings(ticker):
     try:
-        stock = yf.Ticker(ticker)
-        earnings = stock.earnings
-        return jsonify(earnings), 200
+        ticker_obj = yf.Ticker(ticker)
+        earnings = ticker_obj.earnings
+        if earnings is None or earnings.empty:
+            return jsonify({"error": "No earnings data available"}), 404
+        return jsonify(earnings.reset_index().to_dict(orient='records')), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Balance sheet
-@app.route('/stock/<string:ticker>/balance_sheet', methods=['GET'])
-def balance_sheet(ticker):
+# Route for financial statements
+@app.route('/stock/<ticker>/financials', methods=['GET'])
+def get_financials(ticker):
     try:
-        stock = yf.Ticker(ticker)
-        bs = stock.balance_sheet
-        return jsonify(bs), 200
+        ticker_obj = yf.Ticker(ticker)
+        financials = ticker_obj.financials
+        if financials is None or financials.empty:
+            return jsonify({"error": "No financials data available"}), 404
+        return jsonify(financials.reset_index().to_dict(orient='records')), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Income statement
-@app.route('/stock/<string:ticker>/income_stmt', methods=['GET'])
-def income_stmt(ticker):
+# Route for balance sheet
+@app.route('/stock/<ticker>/balance_sheet', methods=['GET'])
+def get_balance_sheet(ticker):
     try:
-        stock = yf.Ticker(ticker)
-        inc_stmt = stock.income_stmt
-        return jsonify(inc_stmt), 200
+        ticker_obj = yf.Ticker(ticker)
+        balance_sheet = ticker_obj.balance_sheet
+        if balance_sheet is None or balance_sheet.empty:
+            return jsonify({"error": "No balance sheet data available"}), 404
+        return jsonify(balance_sheet.reset_index().to_dict(orient='records')), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Cashflow
-@app.route('/stock/<string:ticker>/cashflow', methods=['GET'])
-def cashflow(ticker):
+# Route for cashflow
+@app.route('/stock/<ticker>/cashflow', methods=['GET'])
+def get_cashflow(ticker):
     try:
-        stock = yf.Ticker(ticker)
-        cf = stock.cashflow
-        return jsonify(cf), 200
+        ticker_obj = yf.Ticker(ticker)
+        cashflow = ticker_obj.cashflow
+        if cashflow is None or cashflow.empty:
+            return jsonify({"error": "No cashflow data available"}), 404
+        return jsonify(cashflow.reset_index().to_dict(orient='records')), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Dividends
-@app.route('/stock/<string:ticker>/dividends', methods=['GET'])
-def dividends(ticker):
+# Route for sustainability data
+@app.route('/stock/<ticker>/sustainability', methods=['GET'])
+def get_sustainability(ticker):
     try:
-        stock = yf.Ticker(ticker)
-        dividends = stock.dividends
-        return jsonify(dividends), 200
+        ticker_obj = yf.Ticker(ticker)
+        sustainability = ticker_obj.sustainability
+        if sustainability is None or sustainability.empty:
+            return jsonify({"error": "No sustainability data available"}), 404
+        return jsonify(sustainability.reset_index().to_dict(orient='records')), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Splits
-@app.route('/stock/<string:ticker>/splits', methods=['GET'])
-def splits(ticker):
+# Route for recommendations
+@app.route('/stock/<ticker>/recommendations', methods=['GET'])
+def get_recommendations(ticker):
     try:
-        stock = yf.Ticker(ticker)
-        splits = stock.splits
-        return jsonify(splits.to_json), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-# Institutional holders
-@app.route('/stock/<string:ticker>/institutional_holders', methods=['GET'])
-def institutional_holders(ticker):
-    try:
-        stock = yf.Ticker(ticker)
-        holders = stock.institutional_holders
-        return jsonify(holders), 200
+        ticker_obj = yf.Ticker(ticker)
+        recommendations = ticker_obj.recommendations
+        if recommendations is None or recommendations.empty:
+            return jsonify({"error": "No recommendations available"}), 404
+        return jsonify(recommendations.reset_index().to_dict(orient='records')), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
