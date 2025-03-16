@@ -19,7 +19,7 @@ def growth_estimates(ticker):
     try:
         stock = yf.Ticker(ticker)
         growth = stock.growth_estimates
-        return growth.to_json(), 200
+        return jsonify(growth.to_json), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -29,7 +29,7 @@ def earnings(ticker):
     try:
         stock = yf.Ticker(ticker)
         earnings = stock.earnings
-        return earnings.to_json(), 200
+        return jsonify(earnings), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -39,7 +39,7 @@ def balance_sheet(ticker):
     try:
         stock = yf.Ticker(ticker)
         bs = stock.balance_sheet
-        return bs.to_json(), 200
+        return jsonify(bs), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -49,7 +49,7 @@ def income_stmt(ticker):
     try:
         stock = yf.Ticker(ticker)
         inc_stmt = stock.income_stmt
-        return inc_stmt.to_json(), 200
+        return jsonify(inc_stmt), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -59,7 +59,7 @@ def cashflow(ticker):
     try:
         stock = yf.Ticker(ticker)
         cf = stock.cashflow
-        return cf.to_json(), 200
+        return jsonify(cf), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -69,7 +69,7 @@ def dividends(ticker):
     try:
         stock = yf.Ticker(ticker)
         dividends = stock.dividends
-        return dividends.to_json(), 200
+        return jsonify(dividends), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -79,7 +79,7 @@ def splits(ticker):
     try:
         stock = yf.Ticker(ticker)
         splits = stock.splits
-        return splits.to_json(), 200
+        return jsonify(splits.to_json), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -89,7 +89,7 @@ def institutional_holders(ticker):
     try:
         stock = yf.Ticker(ticker)
         holders = stock.institutional_holders
-        return holders.to_json(), 200
+        return jsonify(holders), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
