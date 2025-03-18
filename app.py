@@ -122,7 +122,7 @@ def get_close_prices():
         # Convert to structured format
         response = {
             "dates": df.index.strftime('%Y-%m-%d').tolist(),
-            "stocks": {ticker: df[ticker].tolist() for ticker in tickers}
+            "prices": {ticker: df[ticker].tolist() for ticker in tickers}
         }
 
         return jsonify(response), 200
