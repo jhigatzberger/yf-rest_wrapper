@@ -1,7 +1,8 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import yfinance as yf
 import pandas as pd
 import numpy as np
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
@@ -100,6 +101,25 @@ def get_recommendations(ticker):
         if recommendations is None or recommendations.empty:
             return jsonify({"error": "No recommendations available"}), 404
         return jsonify(clean_json(recommendations)), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/stocks/close_prices', methods=['POST'])
+def get_close_prices():
+    try:
+        data = request.get_json()
+        tickers = data.get("tickers", [])
+        if not tickers or not isinstance(tickers, list):
+            return jsonify({"error": "Invalid or missing tickers list"}), 400
+
+        end_date = datetime.today()
+        start_date = end_date - timedelta(days=365)
+
+        df = yf.download(tickers, start=start_date, end=end_date)["Close"]
+        if df.empty:
+            return jsonify({"error": "No data available for the given tickers"}), 404
+
+        return jsonify(clean_json(df)), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
