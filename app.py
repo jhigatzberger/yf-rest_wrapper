@@ -119,7 +119,13 @@ def get_close_prices():
         if df.empty:
             return jsonify({"error": "No data available for the given tickers"}), 404
 
-        return jsonify(clean_json(df)), 200
+        # Convert to structured format
+        response = {
+            "dates": df.index.strftime('%Y-%m-%d').tolist(),
+            "stocks": {ticker: df[ticker].tolist() for ticker in tickers}
+        }
+
+        return jsonify(response), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
