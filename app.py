@@ -125,7 +125,7 @@ def get_close_prices():
             "prices": {ticker: df[ticker].tolist() for ticker in tickers}
         }
 
-        return jsonify(response), 200
+        return jsonify(clean_json(response)), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
