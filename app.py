@@ -155,10 +155,10 @@ def get_close_prices_range():
 
         response = {
             "dates": df.index.strftime('%Y-%m-%d').tolist(),
-            "prices": {ticker: df[ticker].tolist() for ticker in tickers}
+            "prices": {ticker: df[ticker].dropna().tolist() for ticker in tickers}
         }
 
-        return jsonify(clean_json(response)), 200
+        return jsonify(response), 200  # Don't clean_json here
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
