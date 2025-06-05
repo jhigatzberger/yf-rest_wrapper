@@ -153,14 +153,20 @@ def get_close_prices_range():
         if df.empty:
             return jsonify({"error": "No data available for the given parameters"}), 404
 
+        # Ensure all tickers are in the DataFrame (even if missing)
+        for ticker in tickers:
+            if ticker not in df.columns:
+                df[ticker] = float('nan')
+
         response = {
             "dates": df.index.strftime('%Y-%m-%d').tolist(),
-            "prices": {ticker: df[ticker].dropna().tolist() for ticker in tickers}
+            "prices": {ticker: [None if pd.isna(v) else v for v in df[ticker].tolist()] for ticker in tickers}
         }
 
-        return jsonify(response), 200  # Don't clean_json here
+        return jsonify(response), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
