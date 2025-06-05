@@ -129,5 +129,38 @@ def get_close_prices():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/stocks/close_prices_range', methods=['GET'])
+def get_close_prices_range():
+    try:
+        tickers = request.args.getlist("ticker")
+        start_date = request.args.get("start")
+        end_date = request.args.get("end")
+
+        # Validate input
+        if not tickers:
+            return jsonify({"error": "Missing tickers"}), 400
+        if not start_date or not end_date:
+            return jsonify({"error": "Missing start or end date"}), 400
+
+        # Parse dates
+        try:
+            start = datetime.strptime(start_date, '%Y-%m-%d')
+            end = datetime.strptime(end_date, '%Y-%m-%d')
+        except ValueError:
+            return jsonify({"error": "Invalid date format. Use YYYY-MM-DD."}), 400
+
+        df = yf.download(tickers, start=start, end=end)["Close"]
+        if df.empty:
+            return jsonify({"error": "No data available for the given parameters"}), 404
+
+        response = {
+            "dates": df.index.strftime('%Y-%m-%d').tolist(),
+            "prices": {ticker: df[ticker].tolist() for ticker in tickers}
+        }
+
+        return jsonify(clean_json(response)), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
